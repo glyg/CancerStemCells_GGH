@@ -1,5 +1,0 @@
-<Simulation version="3.6.2">
-   <XMLScript Type="XMLScript">Simulation/Sim2.xml</XMLScript>
-   <PythonScript Type="PythonScript">Simulation/Sim2.py</PythonScript>
-   <Resource Type="Python">Simulation/Sim2Steppables.py</Resource>
-</Simulation>
