@@ -31,7 +31,7 @@ cellulaire. En effet, ils permettent de bien rendre compte des intéractions
 cellule-cellule, qu'elles soient **biomécaniques** (adhésion) ou
 **biochimiques** (signaux).
 
-![Schéma de principe d'un modèle de Potts cellulaire.](potts_model.png)
+![Schéma de principe du modèle de Potts cellulaire amployé.](figure1.svg)
 
 ## Logiciel de simulation GGH: CompuCell3D
 

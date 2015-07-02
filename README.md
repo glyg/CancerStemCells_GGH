@@ -3,17 +3,11 @@
 A  Glazier-Graner-Hogeweg model of tumoral neuroblast proliferation in
 drosophila
 
+![Schéma de principe du modèle de Potts cellulaire employé. ](images/figure1.svg)
 
 ## We seek to study the mechanism of cell clustering in the tumor
 
 Details can be found in [this document](doc/rapport.md)
-
-
-
-![Example of model output](images/sortie_modele_07052015.png)
-
-
-![Example of model output](images/sortie_modele_12052015_no_adhesion.png)
 
 ## Licence
 
