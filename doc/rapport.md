@@ -25,13 +25,13 @@ Le travail c'est déroulé en 3 étapes:
 
 ## Solution technique
 
+
 Les modèles de Potts cellulaires, ou modèles de Glaziers Gardner Hoggs (GGH)
 sont bien adaptés aux problématiques de prolifération et de différentiation
 cellulaire. En effet, ils permettent de bien rendre compte des intéractions
 cellule-cellule, qu'elles soient **biomécaniques** (adhésion) ou
 **biochimiques** (signaux).
 
-![Schéma de principe du modèle de Potts cellulaire amployé.](figure1.svg)
 
 ## Logiciel de simulation GGH: CompuCell3D
 
@@ -53,8 +53,6 @@ Those properties are stored in `../Sim2/Simulation/sim2.xml`
 
 #### Xml specification
 
-The explore
-
 
 ```xml
   <!-- Containr for the hole specificatiion of CPM (GGH) algorithm -->
@@ -71,35 +69,12 @@ The explore
 ```
 
 
-
-```xml
-
-
-
-     <Potts>
-      <!-- Basic properties of CPM (GGH) algorithm -->
-      <Dimensions x="200" y="200" z="1"/>
-      <Steps>50000</Steps>
-      <Temperature>10.0</Temperature>
-      <NeighborOrder>1</NeighborOrder>
-      <LatticeType>Hexagonal</LatticeType>
-      <!-- Hexagonal lattices allow to alivate the anisotropic effects
-      w/r to square lattices (GGH) algorithm -->  
-   </Potts>
-
-   <Plugin Name="CellType">
-      <!-- Listing all cell types in the simulation -->
-      <CellType TypeId="0" TypeName="Medium"/>
-      <CellType TypeId="1" TypeName="CancerStemCell"/>
-      <CellType TypeId="2" TypeName="Differentiated"/>
-   </Plugin>
-
-</CompuCell3D>
-```
-
 ## Premiers travaux de modélisation
 
-## Base de
+
+## Code Python
+
+## Suites possibles
 
 
 
