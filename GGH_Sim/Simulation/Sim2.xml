@@ -15,7 +15,7 @@
       <!-- Listing all cell types in the simulation -->
       <CellType TypeId="0" TypeName="Medium"/>
       <CellType TypeId="1" TypeName="CancerStemCell"/>
-      <CellType TypeId="2" TypeName="Differentiated"/>
+      <CellType TypeId="2" TypeName="NonCancerous"/>
    </Plugin>
 
    <Plugin Name="Volume"/>
@@ -29,10 +29,10 @@
       <!-- Specification of adhesion energies -->
       <Energy Type1="Medium" Type2="Medium">10.0</Energy>
       <Energy Type1="Medium" Type2="CancerStemCell">10.0</Energy>
-      <Energy Type1="Medium" Type2="Differentiated">10.0</Energy>
+      <Energy Type1="Medium" Type2="NonCancerous">10.0</Energy>
       <Energy Type1="CancerStemCell" Type2="CancerStemCell">10.0</Energy>
-      <Energy Type1="CancerStemCell" Type2="Differentiated">10.0</Energy>
-      <Energy Type1="Differentiated" Type2="Differentiated">10.0</Energy>
+      <Energy Type1="CancerStemCell" Type2="NonCancerous">10.0</Energy>
+      <Energy Type1="NonCancerous" Type2="NonCancerous">10.0</Energy>
       <NeighborOrder>1</NeighborOrder>
    </Plugin>
 
