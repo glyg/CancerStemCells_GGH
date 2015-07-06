@@ -17,10 +17,11 @@ from PySteppablesExamples import MitosisSteppableBase
 ### Limits the cell growth
 growth_rate = 0.1
 
-
+### Differentiation probabilities
 P_sr = 0.4 # symetric self renewing
 P_ar = 0.4 # asymetric self renewing
 P_sd = 1 - (P_sr + P_ar) # symetric differentiating
+
 
 class ConstraintInitializerSteppable(SteppableBasePy):
     ''' Class used to initialize the cells
