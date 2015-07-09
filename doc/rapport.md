@@ -1,5 +1,8 @@
 # GGH Simulation of proliferative Neuroblasts Cancer stem cells
 
+#### Guillaume Gay - DamCB - 03/07/2015
+
+
 ## Position of the problem
 
 The cancer stem cell (CSC) hypothesis postulates that tumors are organized
@@ -22,7 +25,7 @@ populations within the tumor. A computer model can be used to predict parameters
 regulating cluster formation and the regulation of the CSC population within the
 tumor.
 
-The DamCB society was tasked with devising a first explorative model to assert
+The DamCB society was tasked with devising a first exploratory model to assert
 the interest of the strategy.
 
 There where three steps to this work:
@@ -48,7 +51,7 @@ The simulation models three possible differentiation scenarios, from CSC to NCP 
 ![Summary of the modeling method and first results ](../images/figure1.png)
 
 
-### Logiciel de simulation GGH: CompuCell3D
+### GGH Simulation software: CompuCell3D
 
 [CompuCell3D](http://compucell3d.org) has been developed exactly with the GGH
 framework in mind, by the framework authors themselves.
@@ -56,7 +59,7 @@ framework in mind, by the framework authors themselves.
 This software offers a graphical interface showing the running simulations.
 Simulation properties can be specified in various ways.
 
-First, a `.xml` file defines the various cell types and their interactions, for example the adhesion properties.
+First, a xml file defines the various cell types and their interactions, for example the adhesion properties.
 
 Second, several python files allow to specify the cells behavior during the simulation, such as differentiation during mitosis.
 
@@ -98,8 +101,8 @@ different cell types in the differential adhesion scenario. As CSC/CSC and
 NCP/NCP adhesion have lower energy (1.0) than all the other interactions (10.0),
 it favors clustering.
 
-This adhesion energy is thus the key element to investigate in further studies.
-
+We have investigated the effect of a range of adhesion values on cluster
+formation.
 
 
 ## Python Code
@@ -114,17 +117,31 @@ P_ar = 0.4 # asymetric self renewing
 P_sd = 1 - (P_sr + P_ar) # symetric differentiating
 ```
 
-## Next steps
+## Realizations
 
-Here is a list of the various things we can do further on:
+* Consulting/technical input for the writing of a "Émergence (PACA)" grant
+  proposal.
 
 * Systematically explore the adhesion energy parameters.
 
-* Measure and compare clustering in vivo and in silico.
-  **Entropy** could be a good candidate for such a quatification.
+* Measure and compare clustering in vivo and in silico, via the definition
+  of a tumor **entropy**.
 
 * Investigate other clustering mechanisms, such as environment dependent
   differentiation.
+
+> All the necessary code and generated files have been transfered to C. Maurange's
+team.
+
+## Meetings
+
+We met with C. Maurange at the following dates:
+
+- April 2nd 2015 - 14h to 17h
+- May 11th 2015 - 15h to 17h
+- Jully 7th 2015 - 14h to 16h30
+
+## Future work
 
 * Better reflect cell fate by allowing limited number of divisions for NCPs.
 
