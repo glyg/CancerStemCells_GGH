@@ -38,7 +38,9 @@ There where three steps to this work:
 
 
 Cellular Potts models, or their more recent development Glaziers Gradner Hoggs
-(GGH) are well suited for proliferation, clustering and differentiation studies. Indeed, they allow to easily model cell-cell interactions whether those are **biomechanical** (such as adhesion) or **biochemical** (e.g. signaling).
+(GGH) are well suited for proliferation, clustering and differentiation studies.
+Indeed, they allow to easily model cell-cell interactions whether those are
+**biomechanical** (such as adhesion) or **biochemical** (e.g. signaling).
 
 GGH model used here is running on a 2D pixel grid (Fig. 1A). To each pixel is
 associated a `type` (here green - CSC, blue - NCP or white - Medium). At each

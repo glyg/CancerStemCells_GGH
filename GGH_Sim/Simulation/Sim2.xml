@@ -4,7 +4,7 @@
 
       <!-- Basic properties of CPM (GGH) algorithm -->
       <Dimensions x="200" y="200" z="1"/>
-      <Steps>50000</Steps>
+      <Steps>5000</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
       <LatticeType>Hexagonal</LatticeType>
@@ -21,7 +21,6 @@
    <Plugin Name="Volume"/>
 
    <Plugin Name="CenterOfMass">
-
       <!-- Module tracking center of mass of each cell -->
    </Plugin>
 
