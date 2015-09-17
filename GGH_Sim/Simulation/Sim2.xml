@@ -4,7 +4,7 @@
 
       <!-- Basic properties of CPM (GGH) algorithm -->
       <Dimensions x="200" y="200" z="1"/>
-      <Steps>5000</Steps>
+      <Steps>50000</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
       <LatticeType>Hexagonal</LatticeType>
@@ -20,6 +20,8 @@
 
    <Plugin Name="Volume"/>
 
+   <Plugin Name="NeighborTracker"/>
+
    <Plugin Name="CenterOfMass">
       <!-- Module tracking center of mass of each cell -->
    </Plugin>
@@ -29,9 +31,9 @@
       <Energy Type1="Medium" Type2="Medium">10.0</Energy>
       <Energy Type1="Medium" Type2="CancerStemCell">10.0</Energy>
       <Energy Type1="Medium" Type2="NonCancerous">10.0</Energy>
-      <Energy Type1="CancerStemCell" Type2="CancerStemCell">10.0</Energy>
+      <Energy Type1="CancerStemCell" Type2="CancerStemCell">1.0</Energy>
       <Energy Type1="CancerStemCell" Type2="NonCancerous">10.0</Energy>
-      <Energy Type1="NonCancerous" Type2="NonCancerous">10.0</Energy>
+      <Energy Type1="NonCancerous" Type2="NonCancerous">1.0</Energy>
       <NeighborOrder>1</NeighborOrder>
    </Plugin>
 

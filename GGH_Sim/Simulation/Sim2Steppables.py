@@ -1,3 +1,5 @@
+from PlayerPython import *
+import CompuCellSetup
 
 from PySteppables import *
 import CompuCell
@@ -22,14 +24,31 @@ growth_rate = 1.  # random process probability (uniform in [0, 1[)
 prolif_potential = 4  # maximum number of divisions (mother cell)
 
 # Differentiation probabilities
-P_sr = 0.4                  # symetric self renewing
-P_ar = 0.4                  # asymetric self renewing
+P_sr = 0.3                  # symetric self renewing
+P_ar = 0.5                  # asymetric self renewing
 P_sd = 1 - (P_sr + P_ar)    # symetric differentiating
 
 # Critical size to trigger mitosis
 cell_critical_volume = 50
+targetVolume = 25
+lambdaVolume = 10  # E_vol = lambdaVolume(V - V_cell)^2
 
-# </parameter setting>
+# </parameter settings>
+
+# Export parameters to a json file for interoperability
+
+params = {'growth_rate': growth_rate,
+          'P_ar': P_ar,
+          'P_sr': P_sr,
+          'P_sd': P_sd,
+          'cell_critical_volume': cell_critical_volume,
+          'targetVolume': targetVolume,
+          'lambdaVolume': lambdaVolume}
+
+json_fname = 'json_params.json'
+
+with file(json_fname, 'w+') as json:
+    json.dump(params)
 
 
 class ConstraintInitializerSteppable(SteppableBasePy):
@@ -42,20 +61,22 @@ class ConstraintInitializerSteppable(SteppableBasePy):
     def start(self):
 
         for cell in self.cellList:
-            cell.targetVolume = 25
-            cell.lambdaVolume = 2.0
-            cell.age = 0
+            cell.targetVolume = targetVolume
+            cell.lambdaVolume = lambdaVolume
+            cellDict = self.getDictionaryAttribute(cell)
+            cellDict["age"] = 0
+
 
 class GrowthSteppable(SteppableBasePy):
     ''' Class governing cell growth steps.
 
     '''
 
-    def __init__(self,_simulator,_frequency=1):
+    def __init__(self, _simulator, _frequency=1):
 
-        SteppableBasePy.__init__(self,_simulator,_frequency)
+        SteppableBasePy.__init__(self, _simulator, _frequency)
 
-    def step(self,mcs):
+    def step(self, mcs):
         for cell in self.cellList:
             # here is the random growth rate implementation
             dice = np.random.random()
@@ -65,30 +86,9 @@ class GrowthSteppable(SteppableBasePy):
                 cell.targetVolume += 1
 
             elif cell.type == 2:
-                cell.targetVolume += 1
-
-
-class CellGenerationSteppable(IdFieldVisualizationSteppable):
-    ''' Cell level scalar field following the number of generations
-        a cell has seen. It goes this way:
-
-        cell0 cell1 cell2
-        1
-        2     1
-        3     2     1
-        4     3     2
-    '''
-
-    def __init__(self, _simulator, _frequency=1):
-
-        SteppableBasePy.__init__(self, _simulator, _frequency)
-        self.scalarCLField = self.createScalarFieldCellLevelPy("IdField")
-
-    def step(self,mcs):
-        self.scalarCLField.clear()
-
-        for cell in self.cellList:
-            self.scalarCLField[cell]=cell.id*random()
+                cellDict = self.getDictionaryAttribute(cell)
+                if cellDict['age'] < prolif_potential:
+                    cell.targetVolume += 1
 
 
 class MitosisSteppable(MitosisSteppableBase):
@@ -97,14 +97,16 @@ class MitosisSteppable(MitosisSteppableBase):
     def __init__(self, _simulator, _frequency=10):
 
         MitosisSteppableBase.__init__(self, _simulator, _frequency)
+        self.ages = self.createScalarFieldCellLevelPy("IdField")
 
     def step(self, mcs):
         # print "INSIDE MITOSIS STEPPABLE"
         cells_to_divide = []
+
         for cell in self.cellList:
             if cell.volume < cell_critical_volume:
                 continue
-            elif cell.type == 2 and age[cell] > prolif_potential:
+            elif cell.type == 2 and self.ages[cell] > prolif_potential:
                 continue
             cells_to_divide.append(cell)
 
@@ -122,6 +124,16 @@ class MitosisSteppable(MitosisSteppableBase):
         parentCell.targetVolume = parentCell.targetVolume / 2
         childCell.targetVolume = parentCell.targetVolume
         childCell.lambdaVolume = parentCell.lambdaVolume
+
+        self.ages[parentCell] += 1
+        self.ages[childCell] = self.ages[parentCell]
+
+        p_cellDict = self.getDictionaryAttribute(parentCell)
+        p_cellDict['age'] = self.ages[parentCell]
+
+        c_cellDict = self.getDictionaryAttribute(childCell)
+        c_cellDict['age'] = self.ages[childCell]
+
         if parentCell.type == 1:
             dice = np.random.random()
             if dice < P_sr:
@@ -132,4 +144,4 @@ class MitosisSteppable(MitosisSteppableBase):
                 childCell.type = 2
                 parentCell.type = 2
         else:
-            childCell.type=2
+            childCell.type = 2
