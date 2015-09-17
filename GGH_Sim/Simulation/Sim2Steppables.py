@@ -5,6 +5,8 @@ from PySteppables import *
 import CompuCell
 import sys
 import numpy as np
+import json
+
 from PySteppablesExamples import MitosisSteppableBase
 
 # TODO
@@ -13,43 +15,42 @@ from PySteppablesExamples import MitosisSteppableBase
 
 # *** All the global variables must be set bellow
 # <parameter settings>
+params = {
+    'growth_rate': 1.,
+    'P_sr': 0.4,
+    'P_ar': 0.2,
+    'cell_critical_volume': 50,
+    'targetVolume': 25,
+    'lambdaVolume': 10,
+    'prolif_potential': 4,
+    }
+# </parameter settings>
 
 # Randomize cell growth
 # This adds a probabilistic penalty to the growth process.
 # if growth_rate is 1: deterministic growth
 # if growth_rate is 1/n: cell will grow every n steps on average
-growth_rate = 1.  # random process probability (uniform in [0, 1[)
-
+growth_rate = params['growth_rate']  # random process probability (uniform in [0, 1[)
 # include limited number of differentiation ( 4 cycles) for NCPs
-prolif_potential = 4  # maximum number of divisions (mother cell)
-
+prolif_potential = params['prolif_potential']  # maximum number of divisions (mother cell)
 # Differentiation probabilities
-P_sr = 0.3                  # symetric self renewing
-P_ar = 0.5                  # asymetric self renewing
-P_sd = 1 - (P_sr + P_ar)    # symetric differentiating
+P_sr = params['P_sr']                 # symetric self renewing
+P_ar = params['P_ar']                 # asymetric self renewing
+P_sd = 1 - P_sr - P_ar    # symetric differentiating
 
 # Critical size to trigger mitosis
-cell_critical_volume = 50
-targetVolume = 25
-lambdaVolume = 10  # E_vol = lambdaVolume(V - V_cell)^2
+cell_critical_volume = params['cell_critical_volume']
 
-# </parameter settings>
+targetVolume = params['targetVolume']  # E_vol = V_\lambda(V - V_target)^2
+lambdaVolume = params['lambdaVolume']  # (K in the Vertex model)
 
-# Export parameters to a json file for interoperability
+# TODO: Export parameters to a json file for interoperability
+# This raises a IOError, investigate
+# json_fname = 'json_params.json'
 
-params = {'growth_rate': growth_rate,
-          'P_ar': P_ar,
-          'P_sr': P_sr,
-          'P_sd': P_sd,
-          'cell_critical_volume': cell_critical_volume,
-          'targetVolume': targetVolume,
-          'lambdaVolume': lambdaVolume}
 
-json_fname = 'json_params.json'
-
-with file(json_fname, 'w+') as json:
-    json.dump(params)
-
+# with file(json_fname, 'w+') as json:
+#    json.dump(params)
 
 class ConstraintInitializerSteppable(SteppableBasePy):
     ''' Class used to initialize the cells
@@ -97,7 +98,7 @@ class MitosisSteppable(MitosisSteppableBase):
     def __init__(self, _simulator, _frequency=10):
 
         MitosisSteppableBase.__init__(self, _simulator, _frequency)
-        self.ages = self.createScalarFieldCellLevelPy("IdField")
+        self.ages = self.createScalarFieldCellLevelPy("CellAge")
 
     def step(self, mcs):
         # print "INSIDE MITOSIS STEPPABLE"

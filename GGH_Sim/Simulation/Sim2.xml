@@ -4,7 +4,7 @@
 
       <!-- Basic properties of CPM (GGH) algorithm -->
       <Dimensions x="200" y="200" z="1"/>
-      <Steps>50000</Steps>
+      <Steps>500</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
       <LatticeType>Hexagonal</LatticeType>
