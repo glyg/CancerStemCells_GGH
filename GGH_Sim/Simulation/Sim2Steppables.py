@@ -17,8 +17,8 @@ from PySteppablesExamples import MitosisSteppableBase
 # <parameter settings>
 params = {
     'growth_rate': 1.,
-    'P_sr': 0.4,
-    'P_ar': 0.2,
+    'P_sr': 0.5,
+    'P_ar': 0.3,
     'cell_critical_volume': 50,
     'targetVolume': 25,
     'lambdaVolume': 10,

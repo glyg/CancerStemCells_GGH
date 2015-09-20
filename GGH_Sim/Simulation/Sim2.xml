@@ -28,11 +28,11 @@
 
    <Plugin Name="Contact">
       <!-- Specification of adhesion energies -->
-      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
-      <Energy Type1="Medium" Type2="CancerStemCell">10.0</Energy>
-      <Energy Type1="Medium" Type2="NonCancerous">10.0</Energy>
+      <Energy Type1="Medium" Type2="Medium">30.0</Energy>
+      <Energy Type1="Medium" Type2="CancerStemCell">30.0</Energy>
+      <Energy Type1="Medium" Type2="NonCancerous">30.0</Energy>
       <Energy Type1="CancerStemCell" Type2="CancerStemCell">1.0</Energy>
-      <Energy Type1="CancerStemCell" Type2="NonCancerous">10.0</Energy>
+      <Energy Type1="CancerStemCell" Type2="NonCancerous">30.0</Energy>
       <Energy Type1="NonCancerous" Type2="NonCancerous">1.0</Energy>
       <NeighborOrder>1</NeighborOrder>
    </Plugin>
