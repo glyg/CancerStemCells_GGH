@@ -4,7 +4,7 @@
 
       <!-- Basic properties of CPM (GGH) algorithm -->
       <Dimensions x="200" y="200" z="1"/>
-      <Steps>500</Steps>
+      <Steps>1000</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
       <LatticeType>Hexagonal</LatticeType>
@@ -28,11 +28,11 @@
 
    <Plugin Name="Contact">
       <!-- Specification of adhesion energies -->
-      <Energy Type1="Medium" Type2="Medium">30.0</Energy>
-      <Energy Type1="Medium" Type2="CancerStemCell">30.0</Energy>
-      <Energy Type1="Medium" Type2="NonCancerous">30.0</Energy>
+      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
+      <Energy Type1="Medium" Type2="CancerStemCell">10.0</Energy>
+      <Energy Type1="Medium" Type2="NonCancerous">10.0</Energy>
       <Energy Type1="CancerStemCell" Type2="CancerStemCell">1.0</Energy>
-      <Energy Type1="CancerStemCell" Type2="NonCancerous">30.0</Energy>
+      <Energy Type1="CancerStemCell" Type2="NonCancerous">16.0</Energy>
       <Energy Type1="NonCancerous" Type2="NonCancerous">1.0</Energy>
       <NeighborOrder>1</NeighborOrder>
    </Plugin>
@@ -45,7 +45,7 @@
          <Radius>15</Radius>
          <Gap>0</Gap>
          <Width>5</Width>
-         <Types>CancerStemCell</Types>
+         <Types>CancerStemCell, NonCancerous</Types>
       </Region>
    </Steppable>
 </CompuCell3D>

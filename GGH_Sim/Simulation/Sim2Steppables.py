@@ -16,13 +16,14 @@ from PySteppablesExamples import MitosisSteppableBase
 # *** All the global variables must be set bellow
 # <parameter settings>
 params = {
-    'growth_rate': 1.,
+    'growth_rate': 0.2,
     'P_sr': 0.5,
-    'P_ar': 0.3,
+    'P_ar': 0.4,
     'cell_critical_volume': 50,
     'targetVolume': 25,
     'lambdaVolume': 10,
     'prolif_potential': 4,
+    'neighbor_dep': False
     }
 # </parameter settings>
 
@@ -30,9 +31,9 @@ params = {
 # This adds a probabilistic penalty to the growth process.
 # if growth_rate is 1: deterministic growth
 # if growth_rate is 1/n: cell will grow every n steps on average
-growth_rate = params['growth_rate']  # random process probability (uniform in [0, 1[)
+growth_rate = params['growth_rate']  # random  (uniform in [0, 1[)
 # include limited number of differentiation ( 4 cycles) for NCPs
-prolif_potential = params['prolif_potential']  # maximum number of divisions (mother cell)
+prolif_potential = params['prolif_potential']  # maximum number of divisions
 # Differentiation probabilities
 P_sr = params['P_sr']                 # symetric self renewing
 P_ar = params['P_ar']                 # asymetric self renewing
@@ -48,9 +49,6 @@ lambdaVolume = params['lambdaVolume']  # (K in the Vertex model)
 # This raises a IOError, investigate
 # json_fname = 'json_params.json'
 
-
-# with file(json_fname, 'w+') as json:
-#    json.dump(params)
 
 class ConstraintInitializerSteppable(SteppableBasePy):
     ''' Class used to initialize the cells
@@ -136,12 +134,25 @@ class MitosisSteppable(MitosisSteppableBase):
         c_cellDict['age'] = self.ages[childCell]
 
         if parentCell.type == 1:
+            # TODO test this before ddiv / after div
+            _P_sr, _P_ar = P_sr, P_ar
+            if params['neighbor_dep']:
+                n_types = [neighbor.type for neighbor, c_area
+                           in self.getCellNeighborDataList(parentCell)
+                           if neighbor is not None]
+                n_types = np.array(n_types)
+                if n_types.size > 0:
+                    n_t1 = np.float((n_types == 1).sum())
+                    _P_sr = (n_t1 / n_types.size)  # * P_sr / (1 + P_ar)
+                    # _P_sr = max(_P_sr, P_sr)
+                    # _P_ar = (n_t1 / n_types.size) * P_ar
+                    print(_P_sr)
             dice = np.random.random()
-            if dice < P_sr:
+            if dice < _P_sr:
                 childCell.type = 1
-            elif P_sr <= dice < P_ar + P_sr:
+            elif _P_sr <= dice < _P_ar + _P_sr:
                 childCell.type = 2
-            elif dice >= P_ar + P_sr:
+            elif dice >= _P_ar + _P_sr:
                 childCell.type = 2
                 parentCell.type = 2
         else:
