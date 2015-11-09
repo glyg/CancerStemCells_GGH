@@ -23,7 +23,8 @@ params = {
     'targetVolume': 25,
     'lambdaVolume': 10,
     'prolif_potential': 4,
-    'neighbor_dep': False
+    'neighbor_dep_after': False,
+    'neighbor_dep_before': True,
     }
 # </parameter settings>
 
@@ -97,6 +98,7 @@ class MitosisSteppable(MitosisSteppableBase):
 
         MitosisSteppableBase.__init__(self, _simulator, _frequency)
         self.ages = self.createScalarFieldCellLevelPy("CellAge")
+        self.probs = {}
 
     def step(self, mcs):
         # print "INSIDE MITOSIS STEPPABLE"
@@ -111,6 +113,22 @@ class MitosisSteppable(MitosisSteppableBase):
 
         for cell in cells_to_divide:
             # to change mitosis mode leave one of the below lines uncommented
+            if params['neighbor_dep_before']:
+                n_types = []
+                for neighbor, c_area in self.getCellNeighborDataList(cell):
+                    if neighbor is None:
+                        n_types.append(2)
+                    else:
+                        n_types.append(neighbor.type)
+                n_types = np.array(n_types)
+                if n_types.size > 0:
+                    n_t1 = np.float((n_types == 1).sum())
+                    P_sr = (n_t1 / n_types.size)
+                else:
+                    P_sr = 0.5
+                P_ar = (1 - P_sr) * params['P_ar']
+                self.probs[cell.id] = P_sr, P_ar
+
             self.divideCellRandomOrientation(cell)
             # self.divideCellAlongMajorAxis(cell)
             # self.divideCellOrientationVectorBased(cell,1,0,0)
@@ -136,24 +154,50 @@ class MitosisSteppable(MitosisSteppableBase):
         if parentCell.type == 1:
             # TODO test this before ddiv / after div
             _P_sr, _P_ar = P_sr, P_ar
-            if params['neighbor_dep']:
-                n_types = [neighbor.type for neighbor, c_area
-                           in self.getCellNeighborDataList(parentCell)
-                           if neighbor is not None]
-                n_types = np.array(n_types)
-                if n_types.size > 0:
-                    n_t1 = np.float((n_types == 1).sum())
-                    _P_sr = (n_t1 / n_types.size)  # * P_sr / (1 + P_ar)
-                    # _P_sr = max(_P_sr, P_sr)
-                    # _P_ar = (n_t1 / n_types.size) * P_ar
-                    print(_P_sr)
+            if params['neighbor_dep_after']:
+                parent_types = self.get_neighbour_types(parentCell)
+                if parent_types.size > 0:
+                    n_t1 = np.float((parent_types == 1).sum())
+                    P_r = (n_t1 / parent_types.size)
+                    dice = np.random.random()
+                    if dice < P_r:
+                        parentCell.type = 1
+                    else:
+                        parentCell.type = 2
+                child_types = self.get_neighbour_types(childCell)
+                if child_types.size > 0:
+                    n_t1 = np.float((child_types == 1).sum())
+                    P_r = (n_t1 / child_types.size)
+                    dice = np.random.random()
+                    if dice < P_r:
+                        childCell.type = 1
+                    else:
+                        childCell.type = 2
+                return
+
+            elif params['neighbor_dep_before']:
+                _P_sr, _P_ar = self.probs[parentCell.id]
+
             dice = np.random.random()
             if dice < _P_sr:
+                parentCell.type = 1
                 childCell.type = 1
             elif _P_sr <= dice < _P_ar + _P_sr:
+                parentCell.type = 1
                 childCell.type = 2
             elif dice >= _P_ar + _P_sr:
                 childCell.type = 2
                 parentCell.type = 2
+
         else:
+            parentCell.type = 2
             childCell.type = 2
+
+    def get_neighbour_types(self, cell):
+        n_types = []
+        for neighbor, c_area in self.getCellNeighborDataList(cell):
+            if neighbor is None:
+                n_types.append(2)
+            else:
+                n_types.append(neighbor.type)
+        return np.array(n_types)

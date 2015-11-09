@@ -3,7 +3,7 @@
    <ParameterList Resource="Simulation/Sim2.xml">
       <Parameter CurrentIteration="0" Name="Energy" Type="XML_CDATA" ValueType="float">
          [['CompuCell3D','Revision','20141124','Version','3.7.3'],['Plugin','Name','Contact'],['Energy','Type1','CancerStemCell','Type2','NonCancerous']]
-         <Values>1.0,7.2,13.4,19.6,25.8,32.0</Values>
+         <Values>1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0</Values>
       </Parameter>
    </ParameterList>
 </ParameterScan>

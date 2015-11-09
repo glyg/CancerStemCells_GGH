@@ -32,7 +32,7 @@
       <Energy Type1="Medium" Type2="CancerStemCell">10.0</Energy>
       <Energy Type1="Medium" Type2="NonCancerous">10.0</Energy>
       <Energy Type1="CancerStemCell" Type2="CancerStemCell">1.0</Energy>
-      <Energy Type1="CancerStemCell" Type2="NonCancerous">16.0</Energy>
+      <Energy Type1="CancerStemCell" Type2="NonCancerous">1.0</Energy>
       <Energy Type1="NonCancerous" Type2="NonCancerous">1.0</Energy>
       <NeighborOrder>1</NeighborOrder>
    </Plugin>
@@ -45,7 +45,7 @@
          <Radius>15</Radius>
          <Gap>0</Gap>
          <Width>5</Width>
-         <Types>CancerStemCell, NonCancerous</Types>
+         <Types>CancerStemCell</Types>
       </Region>
    </Steppable>
 </CompuCell3D>
