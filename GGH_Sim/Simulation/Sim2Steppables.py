@@ -17,14 +17,14 @@ from PySteppablesExamples import MitosisSteppableBase
 # <parameter settings>
 params = {
     'growth_rate': 0.2,
-    'P_sr': 0.5,
+    'P_sr': 0.8,
     'P_ar': 0.4,
     'cell_critical_volume': 50,
     'targetVolume': 25,
     'lambdaVolume': 10,
     'prolif_potential': 4,
-    'neighbor_dep_after': False,
-    'neighbor_dep_before': True,
+    'neighbor_dep_after': True,
+    'neighbor_dep_before': False,
     }
 # </parameter settings>
 
@@ -158,18 +158,18 @@ class MitosisSteppable(MitosisSteppableBase):
                 parent_types = self.get_neighbour_types(parentCell)
                 if parent_types.size > 0:
                     n_t1 = np.float((parent_types == 1).sum())
-                    P_r = (n_t1 / parent_types.size)
+                    P_s = (n_t1 / parent_types.size)
                     dice = np.random.random()
-                    if dice < P_r:
+                    if dice < P_s:
                         parentCell.type = 1
                     else:
                         parentCell.type = 2
                 child_types = self.get_neighbour_types(childCell)
                 if child_types.size > 0:
                     n_t1 = np.float((child_types == 1).sum())
-                    P_r = (n_t1 / child_types.size)
+                    P_s = (n_t1 / child_types.size)
                     dice = np.random.random()
-                    if dice < P_r:
+                    if dice < P_s:
                         childCell.type = 1
                     else:
                         childCell.type = 2
@@ -181,14 +181,14 @@ class MitosisSteppable(MitosisSteppableBase):
             dice = np.random.random()
             if dice < _P_sr:
                 parentCell.type = 1
-                childCell.type = 1
-            elif _P_sr <= dice < _P_ar + _P_sr:
-                parentCell.type = 1
-                childCell.type = 2
-            elif dice >= _P_ar + _P_sr:
-                childCell.type = 2
+            else:
                 parentCell.type = 2
 
+            dice = np.random.random()
+            if dice < _P_sr:
+                childCell.type = 1
+            else :
+                childCell.type = 2
         else:
             parentCell.type = 2
             childCell.type = 2
