@@ -210,33 +210,16 @@ class Tumor:
 
         pis.index.names = ['t', 'cell']
         self.cell_df['pis'] = pis
-        entropy = - pis * np.log2(pis)
-        self.cell_df['entropy'] = entropy
 
     def cell_averages(self):
-
-
         cell_df = self.cell_df
-        self.is_csc = cell_df.loc[cell_df.type == 1].index
-        self.is_npc = cell_df.loc[cell_df.type == 2].index
+        self.csc_df = cell_df.loc[cell_df.type == 1].groupby(
+            level='t').apply(np.mean)
+        self.csc_df['ncells'] = (cell_df.type == 1).groupby(level='t').sum()
 
-        self.n_csc = (cell_df.type == 1).groupby(level='t').sum()
-        self.n_npc = (cell_df.type == 2).groupby(level='t').sum()
-
-        self.area_csc = cell_df.area.loc[self.is_csc].groupby(
+        self.npc_df = cell_df.loc[cell_df.type == 2].groupby(
             level='t').apply(np.mean)
-        self.area_npc = cell_df.area.loc[self.is_npc].groupby(
-            level='t').apply(np.mean)
-
-        self.entropy_csc = cell_df.entropy.loc[self.is_csc].groupby(
-            level='t').apply(np.mean)
-        self.entropy_npc = cell_df.entropy.loc[self.is_npc].groupby(
-            level='t').apply(np.mean)
-
-        self.pis_csc = cell_df.pis.loc[self.is_csc].groupby(
-            level='t').apply(np.mean)
-        self.pis_npc = cell_df.pis.loc[self.is_npc].groupby(
-            level='t').apply(np.mean)
+        self.npc_df['ncells'] = (cell_df.type == 2).groupby(level='t').sum()
 
 
 def parse_data_dir(DATA_ROOT):
@@ -260,3 +243,36 @@ def parse_data_dir(DATA_ROOT):
         tumors[k] = Tumor(sim_dict)
 
     return tumors
+
+
+def collect_tumor_data(tumors, collected_tumors, sim_names):
+    collected_data = {}
+    for sim_name, tumors in collected_tumors.items():
+        data_dict = {}
+        data_dict['diff_adh'] = np.array([
+            tumor.sim_dict['energies']['CancerStemCell-NonCancerous']
+            for tumor in tumors.values()])
+
+        data_dict['csc_frac'] = np.array([
+            (tumor.csc_df['ncells'] /
+             (tumor.csc_df['ncells'] +
+             tumor.npc_df['ncells'])).iloc[-1]
+            for tumor in tumors.values()])
+
+        data_dict['pop_csc'] = np.array([
+            tumor.csc_df['ncells'].iloc[-1] for tumor in tumors.values()])
+
+        data_dict['area_frac'] = np.array([
+            tumor.csc_df['area'].iloc[-1] / tumor.npc_df['area'].iloc[-1]
+            for tumor in tumors.values()])
+
+        data_dict['clustering_npc'] = np.array([tumor.npc_df['pis'].iloc[-5:].mean()
+                                                for tumor in tumors.values()])
+
+        data_dict['clustering_csc'] = np.array([tumor.csc_df['pis'].iloc[-5:].mean()
+                                                for tumor in tumors.values()])
+
+        collected_data[sim_name] = pd.DataFrame.from_dict(data_dict)
+        collected_data[sim_name].set_index('diff_adh', inplace=True)
+        collected_data[sim_name].sort_index(inplace=True)
+    return collected_data
