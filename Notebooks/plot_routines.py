@@ -3,6 +3,16 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 
 
+# # matplotlib settings
+
+fontdict = {'fontsize':12}
+
+sim_cm = plt.get_cmap('viridis')
+
+csc_cm = plt.get_cmap('afmhot')
+
+npc_cm = plt.get_cmap('bone')
+
 
 def show_fields(tumors, frame_num, f_size_i):
     fig, axes = plt.subplots(len(tumors), len(tumors[0].data_fields))
@@ -11,17 +21,20 @@ def show_fields(tumors, frame_num, f_size_i):
         diff_adh = tumor.sim_dict['energies']['CancerStemCell-NonCancerous']
         for ax, (name, field) in zip(ax_line, tumor.data_fields.items()):
             ax.imshow(field[frame_num], cmap='hot', origin='lower', interpolation='nearest')
-            ax.set_title(name, fontdict={'fontsize':12})
+            ax.set_title(name, fontdict=fontdict)
     return fig, axes
 
 def show_type(tumors, frame_num, f_size_i):
+    ''' Image of the simulation with the cells colored by type
+    '''
+    
     fig, axes = plt.subplots(2, len(tumors)//2)
     fig.set_size_inches(f_size_i)
     for ax, tumor in zip(axes.ravel(), tumors.values()):
         diff_adh = tumor.sim_dict['energies']['CancerStemCell-NonCancerous']
         ax.imshow(tumor.data_fields['CellType'][frame_num], cmap='hot',
                   origin='lower', interpolation='nearest')
-        ax.set_title(diff_adh, fontdict={'fontsize':12})
+        ax.set_title(diff_adh, fontdict=fontdict)
         ax.set_xticks([])
         ax.set_yticks([])
     return fig, axes
@@ -36,17 +49,14 @@ def show_time_components(tumors, f_size_i):
                u'ncells': u'Number of cells',
                u'pis': u'Clustering',}
 
-    csc_cm = plt.get_cmap('afmhot')
-    csc_norm  = colors.Normalize(vmin=0, vmax=len(tumors))
-    csc_map = plt.cm.ScalarMappable(norm=csc_norm, cmap=csc_cm)
-
-    npc_cm = plt.get_cmap('bone')
-    npc_norm  = colors.Normalize(vmin=0, vmax=len(tumors))
-    npc_map = plt.cm.ScalarMappable(norm=npc_norm, cmap=npc_cm)
 
     fig, axes = plt.subplots(1, len(columns))
     fig.set_size_inches(f_size_i)
     font = {'size':12}
+    csc_norm  = colors.Normalize(vmin=0, vmax=len(tumors))
+    csc_map = plt.cm.ScalarMappable(norm=csc_norm, cmap=csc_cm)
+    npc_norm  = colors.Normalize(vmin=0, vmax=len(tumors))
+    npc_map = plt.cm.ScalarMappable(norm=npc_norm, cmap=npc_cm)
 
     for n, tumor in enumerate(tumors.values()):
         csc_color = csc_map.to_rgba(n)

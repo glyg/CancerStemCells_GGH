@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 
+'''
+Module to parse vtk files issued from CompuCell3D simulations
+
+'''
 import os
 from xml.etree import ElementTree
 import numpy as np
 import pandas as pd
-import matplotlib.pylab as plt
 import vtk
 import json
 from vtk.util.numpy_support import vtk_to_numpy
 
-from skimage.filters import rank
-from skimage.morphology import disk
-
-from skimage import filters
 from skimage.future import graph
-
 from skimage import measure
-from scipy import special
+
 
 def parse_cc3d(data_dir, simname):
-
+    
     sim_dict = {}
     sim_str = []
 
@@ -53,8 +51,6 @@ def parse_cc3d(data_dir, simname):
     sim_str.append('## Energies: ')
     for k, v in energies.items():
         sim_str.append('{}: {}'.format(k, v))
-
-
     pysettings = []
 
     with open(py_file) as pf:
@@ -69,7 +65,6 @@ def parse_cc3d(data_dir, simname):
             elif line.startswith('# </parameter settings>'):
                 break
 
-
     sim_dict['pysettings'] = pysettings
 
     sim_str.append('<hr/>\n')
@@ -77,8 +72,7 @@ def parse_cc3d(data_dir, simname):
     for p in pysettings:
         sim_str.append(p)
 
-    vtk_dir = os.path.join(data_dir,'LatticeData')
-
+    vtk_dir = os.path.join(data_dir, 'LatticeData')
     vtk_files = [os.path.join(vtk_dir, f)
                  for f in os.listdir(vtk_dir)
                  if f.endswith('.vtk')]
@@ -94,7 +88,7 @@ def parse_vtk(vtk_file, sim_dict, data_fields):
 
     dim = sim_dict['dim']
     reader = vtk.vtkStructuredPointsReader()
-    #reader = vtkUnstructuredGridReader()
+    # reader = vtkUnstructuredGridReader()
     reader.SetFileName(vtk_file)
     reader.Update()
     field_data = reader.GetOutput()
@@ -122,7 +116,7 @@ def parse_all_vtks(sim_dict, field_names):
     return data_fields, np.array(step_values)
 
 
-class Tumor:
+class Tumor(object):
     '''
     Container class
     '''
@@ -273,6 +267,9 @@ def collect_tumor_data(tumors, collected_tumors, sim_names):
                                                 for tumor in tumors.values()])
 
         collected_data[sim_name] = pd.DataFrame.from_dict(data_dict)
-        collected_data[sim_name].set_index('diff_adh', inplace=True)
-        collected_data[sim_name].sort_index(inplace=True)
+        collected_data[sim_name]['sim_name'] = sim_name
+        # collected_data[sim_name].set_index('diff_adh', inplace=True)
+        # collected_data[sim_name].sort(inplace=True)
+    collected_data = pd.concat(collected_data.values())
+    
     return collected_data
