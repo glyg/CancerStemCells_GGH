@@ -253,8 +253,9 @@ def collect_tumor_data(tumors, collected_tumors, sim_names):
              tumor.npc_df['ncells'])).iloc[-1]
             for tumor in tumors.values()])
 
-        data_dict['pop_csc'] = np.array([
-            tumor.csc_df['ncells'].iloc[-1] for tumor in tumors.values()])
+        data_dict['tumor_size'] = np.array([
+            (tumor.csc_df['ncells'] +
+             tumor.npc_df['ncells']).iloc[-1] for tumor in tumors.values()])
 
         data_dict['area_frac'] = np.array([
             tumor.csc_df['area'].iloc[-1] / tumor.npc_df['area'].iloc[-1]
@@ -272,4 +273,16 @@ def collect_tumor_data(tumors, collected_tumors, sim_names):
         # collected_data[sim_name].sort(inplace=True)
     collected_data = pd.concat(collected_data.values())
     
+    return collected_data
+
+def save_collected(collected_data, root, storename='collected.h5'):
+    with pd.get_store(os.path.join(root, storename)) as store:
+        store['data'] = collected_data
+    print('Collected summary data stored to {}'.format(storename))
+
+def load_collected(root, storename='collected.h5'):
+    with pd.get_store(os.path.join(root, storename)) as store:
+        collected_data = store['data']
+    print('Retrieved summary data from {}'.format(storename))
+
     return collected_data

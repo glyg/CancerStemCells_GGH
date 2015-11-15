@@ -12608,9 +12608,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.39"
-     inkscape:cx="191.1313"
-     inkscape:cy="775.44662"
+     inkscape:zoom="1.1030866"
+     inkscape:cx="572.26057"
+     inkscape:cy="946.13393"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -12774,7 +12774,7 @@
          id="tspan91799">division</tspan></text>
     <g
        style="stroke-width:1.28781188;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:100000"
-       transform="matrix(0.27393581,0,0,0.27393581,172.25346,4.3461204)"
+       transform="matrix(0.27393581,0,0,0.27393581,172.25346,30.804455)"
        id="g49275">
       <g
          id="patch_1"
@@ -37921,5 +37921,17 @@
            id="tspan12784"
            sodipodi:role="line">NPC</tspan></text>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888855px;line-height:122.00000286%;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:100000;stroke-opacity:1"
+       x="196.55388"
+       y="18.180965"
+       id="text24135"
+       sodipodi:linespacing="122%"><tspan
+         sodipodi:role="line"
+         id="tspan24133"
+         style="stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:100000"
+         x="196.55388"
+         y="18.180965">Summerized data</tspan></text>
   </g>
 </svg>
