@@ -2,5 +2,4 @@
    <XMLScript Type="XMLScript">Simulation/Sim2.xml</XMLScript>
    <PythonScript Type="PythonScript">Simulation/Sim2.py</PythonScript>
    <Resource Type="Python">Simulation/Sim2Steppables.py</Resource>
-   <ParameterScan Type="ParameterScan">Simulation/ParameterScanSpecs.xml</ParameterScan>
 </Simulation>

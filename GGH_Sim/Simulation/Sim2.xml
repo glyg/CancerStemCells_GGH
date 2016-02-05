@@ -1,10 +1,9 @@
 <CompuCell3D Revision="20141124" Version="3.7.3">
 
    <Potts>
-
       <!-- Basic properties of CPM (GGH) algorithm -->
       <Dimensions x="200" y="200" z="1"/>
-      <Steps>1000</Steps>
+      <Steps>500</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
       <LatticeType>Hexagonal</LatticeType>
@@ -38,14 +37,13 @@
    </Plugin>
 
    <Steppable Type="BlobInitializer">
-
       <!-- Initial layout of cells in the form of spherical (circular in 2D) blob -->
       <Region>
          <Center x="100" y="100" z="0"/>
          <Radius>15</Radius>
          <Gap>0</Gap>
          <Width>5</Width>
-         <Types>CancerStemCell</Types>
+         <Types>CancerStemCell, NonCancerous</Types>
       </Region>
    </Steppable>
 </CompuCell3D>

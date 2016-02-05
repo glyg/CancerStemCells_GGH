@@ -16,7 +16,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.91+devel r"
-   sodipodi:docname="simulation_exploration.svg">
+   sodipodi:docname="simulation_exploration.svg"
+   inkscape:export-filename="/home/guillaume/Projets/NeuroBlasts/CancerStemCells_GGH/Notebooks/simulation_exploration.png"
+   inkscape:export-xdpi="300.01077"
+   inkscape:export-ydpi="300.01077">
   <defs
      id="defs2"
      style="stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:100000">
@@ -12608,9 +12611,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.1030866"
-     inkscape:cx="572.26057"
-     inkscape:cy="946.13393"
+     inkscape:zoom="1.0673443"
+     inkscape:cx="579.9441"
+     inkscape:cy="392.91503"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"

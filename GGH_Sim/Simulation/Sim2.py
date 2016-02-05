@@ -35,4 +35,11 @@ from Sim2Steppables import MitosisSteppable
 MitosisSteppableInstance = MitosisSteppable(sim,_frequency=1)
 steppableRegistry.registerSteppable(MitosisSteppableInstance)
 
+
+## Data recording
+from Sim2Steppables import RegisterSteppable
+RegisterSteppableInstance = RegisterSteppable(sim,_frequency=1)
+steppableRegistry.registerSteppable(RegisterSteppableInstance)
+
+
 CompuCellSetup.mainLoop(sim, simthread, steppableRegistry)

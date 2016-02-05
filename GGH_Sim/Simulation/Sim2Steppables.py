@@ -2,6 +2,7 @@ from PlayerPython import *
 import CompuCellSetup
 
 from PySteppables import *
+from PySteppables import SteppableBasePy
 import CompuCell
 import sys
 import numpy as np
@@ -14,16 +15,17 @@ from PySteppablesExamples import MitosisSteppableBase
 # track cells neighbourhood
 
 # *** All the global variables must be set bellow
+# Prameters set here prevail over
+
 # <parameter settings>
 params = {
     'growth_rate': 0.2,
     'P_sr': 0.8,
-    'P_ar': 0.4,
     'cell_critical_volume': 50,
     'targetVolume': 25,
     'lambdaVolume': 10,
     'prolif_potential': 4,
-    'neighbor_dep_after': True,
+    'neighbor_dep_after': False,
     'neighbor_dep_before': False,
     }
 # </parameter settings>
@@ -35,10 +37,10 @@ params = {
 growth_rate = params['growth_rate']  # random  (uniform in [0, 1[)
 # include limited number of differentiation ( 4 cycles) for NCPs
 prolif_potential = params['prolif_potential']  # maximum number of divisions
-# Differentiation probabilities
-P_sr = params['P_sr']                 # symetric self renewing
-P_ar = params['P_ar']                 # asymetric self renewing
-P_sd = 1 - P_sr - P_ar    # symetric differentiating
+
+# Self renewing probability, if both 'neighbor_dep_after' and
+#     'neighbor_dep_after' are False
+P_sr0 = params['P_sr']
 
 # Critical size to trigger mitosis
 cell_critical_volume = params['cell_critical_volume']
@@ -65,7 +67,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             cell.lambdaVolume = lambdaVolume
             cellDict = self.getDictionaryAttribute(cell)
             cellDict["age"] = 0
-
+            cellDict["P_sr"] = params['P_sr']
 
 class GrowthSteppable(SteppableBasePy):
     ''' Class governing cell growth steps.
@@ -82,10 +84,10 @@ class GrowthSteppable(SteppableBasePy):
             dice = np.random.random()
             if dice > growth_rate:
                 continue
-            if cell.type == 1:
+            if cell.type == 1: # CancerStemCells
                 cell.targetVolume += 1
 
-            elif cell.type == 2:
+            elif cell.type == 2: # Non prolif
                 cellDict = self.getDictionaryAttribute(cell)
                 if cellDict['age'] < prolif_potential:
                     cell.targetVolume += 1
@@ -97,42 +99,30 @@ class MitosisSteppable(MitosisSteppableBase):
     def __init__(self, _simulator, _frequency=10):
 
         MitosisSteppableBase.__init__(self, _simulator, _frequency)
-        self.ages = self.createScalarFieldCellLevelPy("CellAge")
-        self.probs = {}
 
     def step(self, mcs):
+        """Mitotic cells selection  performed at each step of the simulation
+        """
         # print "INSIDE MITOSIS STEPPABLE"
         cells_to_divide = []
 
         for cell in self.cellList:
+            cellDict = self.getDictionaryAttribute(cell)
             if cell.volume < cell_critical_volume:
-                continue
-            elif cell.type == 2 and self.ages[cell] > prolif_potential:
+                continue # jumps to next cell
+            elif cell.type == 2 and cellDict['age'] > prolif_potential:
                 continue
             cells_to_divide.append(cell)
 
-        for cell in cells_to_divide:
-            # to change mitosis mode leave one of the below lines uncommented
-            if params['neighbor_dep_before']:
-                n_types = []
-                for neighbor, c_area in self.getCellNeighborDataList(cell):
-                    if neighbor is None:
-                        n_types.append(2)
-                    else:
-                        n_types.append(neighbor.type)
-                n_types = np.array(n_types)
-                if n_types.size > 0:
-                    n_t1 = np.float((n_types == 1).sum())
-                    P_sr = (n_t1 / n_types.size)
-                else:
-                    P_sr = 0.5
-                P_ar = (1 - P_sr) * params['P_ar']
-                self.probs[cell.id] = P_sr, P_ar
+            for cell in cells_to_divide:
+                if params['neighbor_dep_before'] and cell.type == 1:
+                    self.set_renewal_prob(cell)
 
-            self.divideCellRandomOrientation(cell)
-            # self.divideCellAlongMajorAxis(cell)
-            # self.divideCellOrientationVectorBased(cell,1,0,0)
-            # self.divideCellAlongMinorAxis(cell)
+                # to change mitosis mode leave one of the below lines uncommented
+                self.divideCellRandomOrientation(cell)
+                # self.divideCellAlongMajorAxis(cell)
+                # self.divideCellOrientationVectorBased(cell,1,0,0)
+                # self.divideCellAlongMinorAxis(cell)
 
     def updateAttributes(self):
 
@@ -142,54 +132,23 @@ class MitosisSteppable(MitosisSteppableBase):
         childCell.targetVolume = parentCell.targetVolume
         childCell.lambdaVolume = parentCell.lambdaVolume
 
-        self.ages[parentCell] += 1
-        self.ages[childCell] = self.ages[parentCell]
-
         p_cellDict = self.getDictionaryAttribute(parentCell)
-        p_cellDict['age'] = self.ages[parentCell]
+        p_cellDict['age'] = p_cellDict['age'] + 1
 
         c_cellDict = self.getDictionaryAttribute(childCell)
-        c_cellDict['age'] = self.ages[childCell]
+        c_cellDict['age'] = p_cellDict['age']
+        c_cellDict['P_sr'] = p_cellDict['P_sr']
 
         if parentCell.type == 1:
             # TODO test this before ddiv / after div
-            _P_sr, _P_ar = P_sr, P_ar
             if params['neighbor_dep_after']:
-                parent_types = self.get_neighbour_types(parentCell)
-                if parent_types.size > 0:
-                    n_t1 = np.float((parent_types == 1).sum())
-                    P_s = (n_t1 / parent_types.size)
-                    dice = np.random.random()
-                    if dice < P_s:
-                        parentCell.type = 1
-                    else:
-                        parentCell.type = 2
-                child_types = self.get_neighbour_types(childCell)
-                if child_types.size > 0:
-                    n_t1 = np.float((child_types == 1).sum())
-                    P_s = (n_t1 / child_types.size)
-                    dice = np.random.random()
-                    if dice < P_s:
-                        childCell.type = 1
-                    else:
-                        childCell.type = 2
-                return
+                self.set_renewal_prob(parentCell)
+                self.set_renewal_prob(childCell)
+            self.choose_type(parentCell)
+            self.choose_type(childCell)
 
-            elif params['neighbor_dep_before']:
-                _P_sr, _P_ar = self.probs[parentCell.id]
-
-            dice = np.random.random()
-            if dice < _P_sr:
-                parentCell.type = 1
-            else:
-                parentCell.type = 2
-
-            dice = np.random.random()
-            if dice < _P_sr:
-                childCell.type = 1
-            else :
-                childCell.type = 2
-        else:
+        else: # Non proliferative cell don't differentiate
+            c_cellDict['P_sr'] = p_cellDict['P_sr'] = 0
             parentCell.type = 2
             childCell.type = 2
 
@@ -201,3 +160,89 @@ class MitosisSteppable(MitosisSteppableBase):
             else:
                 n_types.append(neighbor.type)
         return np.array(n_types)
+
+    def set_renewal_prob(self, cell):
+        """
+        """
+        cellDict = self.getDictionaryAttribute(cell)
+        parent_types = self.get_neighbour_types(cell)
+        if parent_types.size > 0:
+            n_t1 = np.float((parent_types == 1).sum())
+            P_sr = (n_t1 / parent_types.size)
+            cellDict['P_sr'] = P_sr
+        else:
+            cellDict['P_sr'] = 0.5
+
+    def choose_type(self, cell, P_sr=None):
+
+        P_sr = self.getDictionaryAttribute(cell)['P_sr']
+
+        dice = np.random.random() # random number between 0 and 1
+        if dice < P_sr:
+            cell.type = 1
+        else:
+            cell.type = 2
+
+class RegisterSteppable(SteppableBasePy):
+    ''' Class governing cell growth steps.
+
+    '''
+
+    def __init__(self, _simulator, _frequency=1):
+
+        SteppableBasePy.__init__(self, _simulator, _frequency)
+
+    def start(self):
+        self.filename = 'sim_data.csv'
+        self.data = []
+        self.columns = ['mcs', 'id',
+                        'type', 'age', 'P_sr',
+                        'n_type1', 'n_type2', # Number of neighbors by types
+                        'a_type1', 'a_type2'] # Total contact area by types
+
+
+
+    def step(self, mcs):
+        for cell in self.cellList:
+            n_type1 = 0.0
+            n_type2 = 0.0
+            a_type1 = 0.0
+            a_type2 = 0.0
+
+            for neighbor, c_area in self.getCellNeighborDataList(cell):
+                if neighbor is None:
+                    continue
+                if neighbor.type == 1:
+                    n_type1 += 1
+                    a_type1 += c_area
+                elif neighbor.type == 2:
+                    n_type2 += 1
+                    a_type2 += c_area
+
+            cellDict = self.getDictionaryAttribute(cell)
+
+            step_data = [mcs, cell.id,
+                         cell.type,
+                         cellDict['age'],
+                         cellDict['P_sr'],
+                         n_type1, n_type2,
+                         a_type1, a_type2]
+            self.data.append(step_data)
+
+    def finish(self):
+
+        try:
+            file_handle, full_fname = \
+              self.openFileInSimulationOutputDirectory(self.filename, "w+")
+
+            metadata = '# ' + full_fname
+            col_names = '# ' + ','.join(self.columns)
+            header = '\n'.join([metadata, col_names])
+            np.savetxt(file_handle, np.asarray(self.data), header=header)
+            print('saved sim data to {}'.format(full_fname))
+
+        except IOError:
+            raise("Could not open file ", self.filename," for writing. ")
+
+        finally:
+            file_handle.close()
