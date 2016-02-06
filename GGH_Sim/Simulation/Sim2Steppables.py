@@ -235,10 +235,10 @@ class RegisterSteppable(SteppableBasePy):
             file_handle, full_fname = \
               self.openFileInSimulationOutputDirectory(self.filename, "w+")
 
-            metadata = '# ' + full_fname
-            col_names = '# ' + ','.join(self.columns)
+            metadata = full_fname
+            col_names = ','.join(self.columns)
             header = '\n'.join([metadata, col_names])
-            np.savetxt(file_handle, np.asarray(self.data), header=header)
+            np.savetxt(file_handle, np.asarray(self.data), header=col_names, delimiter=',')
             print('saved sim data to {}'.format(full_fname))
 
         except IOError:
