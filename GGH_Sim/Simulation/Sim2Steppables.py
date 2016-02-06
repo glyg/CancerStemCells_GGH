@@ -242,7 +242,6 @@ class RegisterSteppable(SteppableBasePy):
             print('saved sim data to {}'.format(full_fname))
 
         except IOError:
-            raise("Could not open file ", self.filename," for writing. ")
+            raise("""Could not open file %s for writing.""" % self.filename)
 
-        finally:
-            file_handle.close()
+        file_handle.close()
