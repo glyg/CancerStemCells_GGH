@@ -4,11 +4,13 @@ import CompuCellSetup
 from PySteppables import *
 from PySteppables import SteppableBasePy
 import CompuCell
-import sys
+import sys, os
 import numpy as np
 import json
 
 from PySteppablesExamples import MitosisSteppableBase
+
+
 
 # TODO
 # include apoptosis (not quantified)
@@ -231,10 +233,9 @@ class RegisterSteppable(SteppableBasePy):
 
     def finish(self):
 
-        file_handle, full_fname = \
-          self.openFileInSimulationOutputDirectory(self.filename, "w+")
-        file_handle.close()
 
+        sim_dir = CompuCellSetup.getSimulationOutputDir()
+        full_fname = os.path.join(sim_dir, 'test.csv')
         metadata = full_fname
         col_names = ','.join(self.columns)
         header = '\n'.join([metadata, col_names])
