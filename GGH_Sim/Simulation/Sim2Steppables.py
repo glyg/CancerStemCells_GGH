@@ -234,10 +234,11 @@ class RegisterSteppable(SteppableBasePy):
     def finish(self):
 
 
-        sim_dir = CompuCellSetup.getSimulationOutputDir()
-        full_fname = os.path.join(sim_dir, 'test.csv')
+        # sim_dir = CompuCellSetup.getSimulationOutputDir()
+        full_fname = '/home/cc3d/Desktop/sim_data.csv'
         metadata = full_fname
         col_names = ','.join(self.columns)
         header = '\n'.join([metadata, col_names])
-        np.savetxt(full_fname, np.asarray(self.data), header=col_names, delimiter=',')
+        np.savetxt(full_fname, np.asarray(self.data),
+                   header=col_names, delimiter=',')
         print('saved sim data to {}'.format(full_fname))
