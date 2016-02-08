@@ -240,8 +240,7 @@ class RegisterSteppable(SteppableBasePy):
             header = '\n'.join([metadata, col_names])
             np.savetxt(file_handle, np.asarray(self.data), header=col_names, delimiter=',')
             print('saved sim data to {}'.format(full_fname))
+            file_handle.close()
 
         except IOError:
-            raise("""Could not open file %s for writing.""" % self.filename)
-
-        file_handle.close()
+            print("""Could not open file %s for writing.""" % self.filename)
