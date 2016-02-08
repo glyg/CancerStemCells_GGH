@@ -231,16 +231,12 @@ class RegisterSteppable(SteppableBasePy):
 
     def finish(self):
 
-        try:
-            file_handle, full_fname = \
-              self.openFileInSimulationOutputDirectory(self.filename, "w+")
+        file_handle, full_fname = \
+          self.openFileInSimulationOutputDirectory(self.filename, "w+")
+        file_handle.close()
 
-            metadata = full_fname
-            col_names = ','.join(self.columns)
-            header = '\n'.join([metadata, col_names])
-            np.savetxt(file_handle, np.asarray(self.data), header=col_names, delimiter=',')
-            print('saved sim data to {}'.format(full_fname))
-            file_handle.close()
-
-        except IOError:
-            print("""Could not open file %s for writing.""" % self.filename)
+        metadata = full_fname
+        col_names = ','.join(self.columns)
+        header = '\n'.join([metadata, col_names])
+        np.savetxt(full_fname, np.asarray(self.data), header=col_names, delimiter=',')
+        print('saved sim data to {}'.format(full_fname))
