@@ -5,6 +5,8 @@ from PySteppables import *
 from PySteppables import SteppableBasePy
 import CompuCell
 import sys, os
+import datetime
+
 import numpy as np
 import json
 
@@ -235,7 +237,13 @@ class RegisterSteppable(SteppableBasePy):
 
 
         # sim_dir = CompuCellSetup.getSimulationOutputDir()
-        full_fname = '/home/cc3d/Desktop/sim_data.csv'
+
+        timestamp=datetime.datetime.now().__str__()
+        timestamp=timestamp.replace(' ','-')
+        timestamp=timestamp.replace('.','-')
+        timestamp=timestamp.replace(':','-')
+
+        full_fname = '/home/cc3d/Desktop/sim_data_{}.csv'.format(timestamp)
         metadata = full_fname
         col_names = ','.join(self.columns)
         header = '\n'.join([metadata, col_names])
